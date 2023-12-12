@@ -1,14 +1,27 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {Drawer, List, ListItem, ListItemText, Divider, Box, Typography, Toolbar, Button} from '@mui/material';
-import logo from '../ressources/logo.png'; // Assurez-vous que le chemin est correct
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import Deployment from "../components/Deployement";
+import {fetchDeployments} from "../slices/DeployementSlice";
 
 const drawerWidth = 240;
+const socket = io('http://localhost:3002'); // Remplacez par l'URL de votre serveur
 
 export default function Dashboard() {
+    const [deployMessage, setDeployMessage] = useState('non');
+
     const [selectedProject, setSelectedProject] = useState('front');
+    const [deployement, setDeployement ] = useState()
     let navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const handleStatusChange = (projectId, stepName, newStatus) => {
+        dispatch(updateStepStatus({ projectId, stepName, newStatus }));
+    };
 
     const handleListItemClick = (project) => {
         setSelectedProject(project);
@@ -18,6 +31,23 @@ export default function Dashboard() {
         navigate('/');
 
     }
+
+    useEffect(() => {
+        setDeployement(dispatch(fetchDeployments()));
+        socket.on('deployUpdate', (data) => {
+            setDeployMessage(data.message);
+            // Vous pouvez également effectuer d'autres actions en réponse à la notification
+        });
+
+        return () => {
+            socket.off('deployUpdate');
+        };
+    }, []);
+
+    const updateStepStatus = (projetName, projectId, stepName, newStatus) => {
+
+    };
+
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -48,6 +78,16 @@ export default function Dashboard() {
                 <Typography variant="h6">
                     {`Project: ${selectedProject}`}
                 </Typography>
+                <Button >Deploy !</Button>
+                {deployMessage && <p>{deployMessage}</p>}
+
+                {/*
+                    depl.reverse().map(e => (
+                        <Deployment key={e.id} id={e.id} steps={e.steps} statusP={e.status}
+                                    updateStepStatus={updateStepStatus} projetName={selectedProject}/>
+                    ))
+                */}
+
                 {/* Ici, ajoutez le contenu de chaque projet, comme les étapes de CI/CD */}
             </Box>
         </Box>
