@@ -1,25 +1,23 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import './App.css';
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import { Provider } from 'react-redux';
-import { store } from './store';
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Pipelines from './components/Pipelines';
+import Layout from './components/Layout';
+import Pipeline from "./components/PipelineDetail"; // Assurez-vous d'importer le composant de disposition
 
-function App() {
+const App = () => {
     return (
-        <Provider store={store}>
-            <Router>
-                <div className="App">
-                    <Routes>
-                        <Route path="/" element={<Login />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                    </Routes>
-                </div>
-            </Router>
-        </Provider>
-
+        <Router>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Layout />}>
+                    <Route path="pipelines/:repoid" element={<Pipelines />} />
+                    <Route path="pipeline/:pipelineid" element={<Pipeline />} />
+                </Route>
+            </Routes>
+        </Router>
     );
-}
+};
 
 export default App;
