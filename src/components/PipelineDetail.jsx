@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
 import {useSocket} from "../contexts/SocketContext";
+import toast from "react-hot-toast";
+import withAuthProtection from "../contexts/AuthProtection";
+
 
 const Pipeline = () => {
     const { pipelineid } = useParams();
@@ -11,7 +14,7 @@ const Pipeline = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/pipelines/${pipelineid}`);
+                const response = await axios.get(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
                 setData(response.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
@@ -38,9 +41,19 @@ const Pipeline = () => {
 
     const startPipeline = async () => {
         try {
-            await axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`);
+            await axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`,{}, { withCredentials: true });
+            toast.success('Pipeline started successfully');
         } catch (error) {
-            console.error("Erreur lors du démarrage de la pipeline", error);
+            if (error.response) {
+                console.error('Error response:', error.response);
+                toast.error(`Error: ${error.response.data}`);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+                toast.error('No response received from the server');
+            } else {
+                console.error('Error message:', error.message);
+                toast.error(`Error: ${error.message}`);
+            }
         }
     };
 
@@ -85,4 +98,4 @@ const Pipeline = () => {
     );
 };
 
-export default Pipeline;
+export default withAuthProtection(Pipeline);

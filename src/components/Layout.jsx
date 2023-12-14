@@ -1,7 +1,8 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
+import withAuthProtection from "../contexts/AuthProtection";
 
 const Layout = () => {
     return (
@@ -17,4 +18,4 @@ const Layout = () => {
     );
 };
 
-export default Layout;
+export default withAuthProtection(Layout);

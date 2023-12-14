@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSocket } from '../contexts/SocketContext';
+import withAuthProtection from "../contexts/AuthProtection";
 
 const Pipelines = () => {
     const { repoid } = useParams();
@@ -13,10 +14,10 @@ const Pipelines = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/pipelines?repoId=${repoid}`);
+                const response = await axios.get(`http://localhost:3001/pipelines?repoId=${repoid}`, { withCredentials: true });
                 setData(response.data);
 
-                const repositoryResponse = await axios.get(`http://localhost:3001/repositories/${repoid}`);
+                const repositoryResponse = await axios.get(`http://localhost:3001/repositories/${repoid}`, { withCredentials: true });
                 setRepository(repositoryResponse.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
@@ -119,4 +120,4 @@ const Pipelines = () => {
     );
 };
 
-export default Pipelines;
+export default withAuthProtection(Pipelines);

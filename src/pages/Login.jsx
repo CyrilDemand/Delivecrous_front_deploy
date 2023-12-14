@@ -1,10 +1,19 @@
 // Login.js
 import React, { useState } from 'react';
+import {useLocation} from "react-router-dom";
 // Importez d'autres bibliothèques si nécessaire, par exemple pour la gestion des formulaires
 
 const Login = () => {
+
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const redirectParam = searchParams.get('redirect');
     const handleGitHubLogin = () => {
-        window.location.href = 'http://localhost:3001/auth/github';
+        if (redirectParam) {
+            window.location.href = `http://localhost:3001/auth/github?redirect=${encodeURIComponent(redirectParam)}`;
+        } else {
+            window.location.href = 'http://localhost:3001/auth/github';
+        }
     };
 
     return (

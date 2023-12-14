@@ -9,7 +9,7 @@ const Sidebar = () => {
         // Fetch repositories when the component mounts
         const fetchRepositories = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/repositories');
+                const response = await axios.get('http://localhost:3001/repositories', { withCredentials: true });
                 setRepositories(response.data);
             } catch (error) {
                 console.error('Error fetching repositories:', error);
