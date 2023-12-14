@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // use useNavigate for React Router v6
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSocket } from '../contexts/SocketContext';
 
 const Pipelines = () => {
     const { repoid } = useParams();
     const [data, setData] = useState(null);
-    const navigate = useNavigate(); // use useNavigate for React Router v6
+    const navigate = useNavigate();
+    const socket = useSocket();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -18,6 +20,33 @@ const Pipelines = () => {
         };
 
         fetchData();
+
+        if (socket) {
+            socket.on('pipelineCreated', newPipeline => {
+                console.log('pipelineCreated : '+newPipeline.toString() )
+                if (newPipeline.repoId === repoid) {
+                    setData(prevData => [...prevData, newPipeline]);
+                }
+            });
+
+            socket.on('pipelineUpdated', updatedPipeline => {
+                console.log('pipelineUpdated : '+updatedPipeline.toString())
+                if (updatedPipeline.repoId === repoid) {
+                    setData(prevData => prevData.map(pipeline =>
+                        pipeline._id === updatedPipeline._id ? updatedPipeline : pipeline
+                    ));
+                }
+            });
+        }
+
+        return () => {
+            if (socket) {
+                socket.off('pipelineCreated');
+                socket.off('pipelineUpdated');
+            }
+        };
+
+
     }, [repoid]);
 
     const navigateToPipeline = (pipelineId) => {

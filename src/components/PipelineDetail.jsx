@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import {useSocket} from "../contexts/SocketContext";
 
 const Pipeline = () => {
     const { pipelineid } = useParams();
     const [data, setData] = useState(null);
+    const socket = useSocket();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,15 +19,28 @@ const Pipeline = () => {
         };
 
         fetchData();
-    }, [pipelineid]);
+
+
+        if (socket) {
+            socket.on('pipelineUpdated', updatedPipeline => {
+                if (updatedPipeline._id === pipelineid) {
+                    setData(updatedPipeline);
+                }
+            });
+        }
+
+        return () => {
+            if (socket) {
+                socket.off('pipelineUpdated');
+            }
+        };
+    }, [pipelineid, socket]);
 
     const startPipeline = async () => {
         try {
             await axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`);
-            alert("Pipeline started successfully");
         } catch (error) {
             console.error("Erreur lors du démarrage de la pipeline", error);
-            alert("Failed to start pipeline");
         }
     };
 
