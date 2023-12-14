@@ -6,6 +6,7 @@ import { useSocket } from '../contexts/SocketContext';
 const Pipelines = () => {
     const { repoid } = useParams();
     const [data, setData] = useState(null);
+    const [repository, setRepository] = useState(null);
     const navigate = useNavigate();
     const socket = useSocket();
 
@@ -14,6 +15,9 @@ const Pipelines = () => {
             try {
                 const response = await axios.get(`http://localhost:3001/pipelines?repoId=${repoid}`);
                 setData(response.data);
+
+                const repositoryResponse = await axios.get(`http://localhost:3001/repositories/${repoid}`);
+                setRepository(repositoryResponse.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
             }
@@ -55,6 +59,16 @@ const Pipelines = () => {
 
     return (
         <div>
+            {repository && (
+                <div className="mb-4 p-4 bg-white shadow rounded">
+                    <h3 className="text-lg font-semibold">{repository.name}</h3>
+                    <p className="text-sm text-gray-600">{repository.description || 'No description available'}</p>
+                    <a href={repository.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        Visit Repository
+                    </a>
+                </div>
+            )}
+
             {data ? (
                 <table className="min-w-full leading-normal">
                     <thead>
