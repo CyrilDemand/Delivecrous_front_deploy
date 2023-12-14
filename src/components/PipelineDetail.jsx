@@ -41,7 +41,7 @@ const Pipeline = () => {
 
     const startPipeline = async () => {
         try {
-            await axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`,{}, { withCredentials: true });
+            axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`,{}, { withCredentials: true });
             toast.success('Pipeline started successfully');
         } catch (error) {
             if (error.response) {
@@ -70,7 +70,6 @@ const Pipeline = () => {
                         <p><strong>Commit Message:</strong> {data.commitMessage}</p>
                         <p><strong>Author:</strong> {data.authorName}</p>
                         <p><strong>Timestamp:</strong> {new Date(data.timestamp).toLocaleString()}</p>
-                        <p><strong>Repository:</strong> <a href={data.repoHttpUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{data.repoHttpUrl}</a></p>
                     </div>
                     <div>
                         <h3 className="text-xl mb-2">Steps</h3>

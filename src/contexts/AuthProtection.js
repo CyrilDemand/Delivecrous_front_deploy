@@ -12,13 +12,17 @@ const withAuthProtection = (WrappedComponent) => {
 
         useEffect(() => {
             if (!isLoading && !isAuthenticated) {
-                const pathname = location.pathname;
-                const lastSegment = pathname.substring(pathname.lastIndexOf('/') + 1);
-                //TODO : spliter correctement l'url (pas seulement après le dernier slash) et verifier que tout marche jusqu'a la fin
+                const fullPath = location.pathname + location.search + location.hash;
 
-                navigate('/login?redirect=' + lastSegment, { replace: true });
+                navigate('/login?redirect=' + encodeURIComponent(fullPath), { replace: true });
             }
-        }, [isAuthenticated, isLoading, navigate]);
+        }, [isAuthenticated, isLoading, navigate, location]);
+
+
+        if (!isAuthenticated || isLoading) {
+            // You can render a loading indicator or null here
+            return null;
+        }
 
         return <WrappedComponent {...props} />;
     };
