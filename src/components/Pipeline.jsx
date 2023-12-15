@@ -9,9 +9,11 @@ import withAuthProtection from "../contexts/AuthProtection";
 const Pipeline = () => {
     const { pipelineid } = useParams();
     const [data, setData] = useState(null);
+    const [HasPipelineRunning, setHasPipelineRunning] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const socket = useSocket();
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -22,9 +24,9 @@ const Pipeline = () => {
             }
 
             try {
-                const url = `http://localhost:3001/repositories/ispipelinerunning/${data?.repoId}`;
+                const url = `http://localhost:3001/repositories/haspipelinerunning/${data?.repoId}`;
                 const repoResponse = await axios.get(url, { withCredentials: true });
-                setIsRunning(repoResponse.data.isRunning);
+                setHasPipelineRunning(repoResponse.data.isRunning);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
             }
@@ -36,8 +38,10 @@ const Pipeline = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
+                console.log(response.data)
                 setData(response.data);
                 setIsLoading(false);
+                setIsRunning(response.data.state === "running")
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
                 setIsLoading(false);
@@ -73,7 +77,7 @@ const Pipeline = () => {
     }, [pipelineid, socket]);
 
     const startPipeline = async () => {
-        if (isRunning) {
+        if (HasPipelineRunning) {
             toast.error('A pipeline is already running for this repository');
             return;
         }
@@ -94,6 +98,19 @@ const Pipeline = () => {
         }
     };
 
+    const deletePipeline = async () => {
+        if (window.confirm('Are you sure you want to delete this pipeline?')) {
+            try {
+                await axios.delete(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
+                toast.success('Pipeline successfully deleted');
+                navigate('/repository/'+data.repoId); // Navigate to a different page after deletion
+            } catch (error) {
+                console.error('Error deleting pipeline:', error);
+                toast.error('Failed to delete pipeline : '+error.response.data);
+            }
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             {data ? (
@@ -103,11 +120,11 @@ const Pipeline = () => {
                         <div className="mb-6">
                             <h3 className="text-xl mb-2">General Information</h3>
                             <p><strong>Name:</strong> {data.name}</p>
-                            <p><strong>Branch:</strong> {data.branch}</p>
+                            <p><strong>Commit:</strong> {data.branch}</p>
                             <p><strong>Commit ID:</strong> {data.commitId}</p>
                             <p><strong>Commit Message:</strong> {data.commitMessage}</p>
                             <p><strong>Author:</strong> {data.authorName}</p>
-                            <p><strong>Timestamp:</strong> {new Date(data.timestamp).toLocaleString()}</p>
+                            <p><strong>Creation Date:</strong> {new Date(data.createdAt).toLocaleString()}</p>
                         </div>
                         <div>
                             <h3 className="text-xl mb-2">Steps</h3>
@@ -124,10 +141,18 @@ const Pipeline = () => {
 
                     <button
                         onClick={startPipeline}
-                        disabled={isRunning}
-                        className={`mt-4 ${isRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
+                        disabled={HasPipelineRunning}
+                        className={`mt-4 ${HasPipelineRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
                     >
                         Start Pipeline
+                    </button>
+
+                    <button
+                        onClick={deletePipeline}
+                        disabled={isRunning}
+                        className={`mt-4 ml-4 ${isRunning ? 'bg-gray-400' : 'bg-red-500 hover:bg-red-700'} text-white font-bold py-2 px-4 rounded`}
+                    >
+                        Delete Pipeline
                     </button>
                 </div>
             ) : (
