@@ -9,7 +9,30 @@ import withAuthProtection from "../contexts/AuthProtection";
 const Pipeline = () => {
     const { pipelineid } = useParams();
     const [data, setData] = useState(null);
+    const [isRunning, setIsRunning] = useState(false);
     const socket = useSocket();
+
+
+    useEffect(() => {
+        const updateisRunning = async () => {
+            if (!data) {
+                // Data is null, exit the function or handle accordingly
+                return;
+            }
+
+            try {
+                console.log(data);
+                const url = `http://localhost:3001/repositories/ispipelinerunning/${data?.repoId}`;
+                console.log(url);
+                const repoResponse = await axios.get(url, { withCredentials: true });
+                console.log(repoResponse.data);
+                setIsRunning(repoResponse.data.isRunning);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données", error);
+            }
+        };
+        updateisRunning();
+    }, [data]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,28 +53,42 @@ const Pipeline = () => {
                     setData(updatedPipeline);
                 }
             });
+
+            socket.on('pipelineStarted', () => {
+                fetchData();
+            });
+
+            socket.on('pipelineStopped', () => {
+                fetchData();
+            });
         }
 
         return () => {
             if (socket) {
                 socket.off('pipelineUpdated');
+                socket.off('pipelineStarted');
+                socket.off('pipelineStopped');
             }
         };
     }, [pipelineid, socket]);
 
     const startPipeline = async () => {
+        if (isRunning) {
+            toast.error('A pipeline is already running for this repository');
+            return;
+        }
+
         try {
-            axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`,{}, { withCredentials: true });
-            toast.success('Pipeline started successfully');
+            axios.post(`http://localhost:3001/pipelines/start/${pipelineid}`,{}, { withCredentials: true })
+                .catch((error) => {
+                    toast.error(`Error: ${error.response.data}`)
+                });
         } catch (error) {
             if (error.response) {
-                console.error('Error response:', error.response);
                 toast.error(`Error: ${error.response.data}`);
             } else if (error.request) {
-                console.error('Error request:', error.request);
                 toast.error('No response received from the server');
             } else {
-                console.error('Error message:', error.message);
                 toast.error(`Error: ${error.message}`);
             }
         }
@@ -89,7 +126,8 @@ const Pipeline = () => {
 
             <button
                 onClick={startPipeline}
-                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                disabled={isRunning}
+                className={`mt-4 ${isRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
             >
                 Start Pipeline
             </button>

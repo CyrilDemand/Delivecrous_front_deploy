@@ -13,7 +13,6 @@ const Navbar = () => {
                 setUserInfo(response.data);
             } catch (error) {
                 console.error('Error fetching user info:', error);
-                // Handle error (e.g., redirect to login if not authenticated)
             }
         };
 
