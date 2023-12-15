@@ -10,6 +10,7 @@ const Pipeline = () => {
     const { pipelineid } = useParams();
     const [data, setData] = useState(null);
     const [isRunning, setIsRunning] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const socket = useSocket();
 
 
@@ -21,11 +22,8 @@ const Pipeline = () => {
             }
 
             try {
-                console.log(data);
                 const url = `http://localhost:3001/repositories/ispipelinerunning/${data?.repoId}`;
-                console.log(url);
                 const repoResponse = await axios.get(url, { withCredentials: true });
-                console.log(repoResponse.data);
                 setIsRunning(repoResponse.data.isRunning);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
@@ -39,8 +37,10 @@ const Pipeline = () => {
             try {
                 const response = await axios.get(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
                 setData(response.data);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
+                setIsLoading(false);
             }
         };
 
@@ -98,39 +98,48 @@ const Pipeline = () => {
         <div className="container mx-auto p-4">
             {data ? (
                 <div>
-                    <h2 className="text-2xl font-semibold mb-4">Pipeline Details</h2>
-                    <div className="mb-6">
-                        <h3 className="text-xl mb-2">General Information</h3>
-                        <p><strong>Name:</strong> {data.name}</p>
-                        <p><strong>Branch:</strong> {data.branch}</p>
-                        <p><strong>Commit ID:</strong> {data.commitId}</p>
-                        <p><strong>Commit Message:</strong> {data.commitMessage}</p>
-                        <p><strong>Author:</strong> {data.authorName}</p>
-                        <p><strong>Timestamp:</strong> {new Date(data.timestamp).toLocaleString()}</p>
-                    </div>
                     <div>
-                        <h3 className="text-xl mb-2">Steps</h3>
-                        <ul className="list-disc pl-5">
-                            {data.steps.map((step, index) => (
-                                <li key={index} className="mb-2">
-                                    <span className="font-semibold">{step.step}:</span> {step.state}
-                                    {step.stacktrace && <div className="text-red-600">Error: {step.stacktrace}</div>}
-                                </li>
-                            ))}
-                        </ul>
+                        <h2 className="text-2xl font-semibold mb-4">Pipeline Details</h2>
+                        <div className="mb-6">
+                            <h3 className="text-xl mb-2">General Information</h3>
+                            <p><strong>Name:</strong> {data.name}</p>
+                            <p><strong>Branch:</strong> {data.branch}</p>
+                            <p><strong>Commit ID:</strong> {data.commitId}</p>
+                            <p><strong>Commit Message:</strong> {data.commitMessage}</p>
+                            <p><strong>Author:</strong> {data.authorName}</p>
+                            <p><strong>Timestamp:</strong> {new Date(data.timestamp).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <h3 className="text-xl mb-2">Steps</h3>
+                            <ul className="list-disc pl-5">
+                                {data.steps.map((step, index) => (
+                                    <li key={index} className="mb-2">
+                                        <span className="font-semibold">{step.step}:</span> {step.state}
+                                        {step.stacktrace && <div className="text-red-600">Error: {step.stacktrace}</div>}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
+
+                    <button
+                        onClick={startPipeline}
+                        disabled={isRunning}
+                        className={`mt-4 ${isRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
+                    >
+                        Start Pipeline
+                    </button>
                 </div>
             ) : (
-                <p className="text-gray-600">Chargement...</p>
+                isLoading ? (
+                    <p className="text-gray-600">Loading...</p>
+                ) : (
+                    <p className="text-red-600 text-2xl font-bold w-full text-center">Pipeline not found</p>
+                )
+
             )}
 
-            <button
-                onClick={startPipeline}
-                disabled={isRunning}
-                className={`mt-4 ${isRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
-            >
-                Start Pipeline
-            </button>
+
         </div>
     );
 };

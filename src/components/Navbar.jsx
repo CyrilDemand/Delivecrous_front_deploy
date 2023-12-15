@@ -9,7 +9,7 @@ const Navbar = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/auth/info', {withCredentials:true}); // Adjust the URL as needed
+                const response = await axios.get('http://localhost:3001/user/info', {withCredentials:true}); // Adjust the URL as needed
                 setUserInfo(response.data);
             } catch (error) {
                 console.error('Error fetching user info:', error);
