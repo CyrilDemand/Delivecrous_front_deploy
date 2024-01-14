@@ -4,6 +4,7 @@ import axios from 'axios';
 import {useSocket} from "../contexts/SocketContext";
 import toast from "react-hot-toast";
 import withAuthProtection from "../contexts/AuthProtection";
+import {StateIcon} from "./StateIcon";
 
 
 const Pipeline = () => {
@@ -126,34 +127,34 @@ const Pipeline = () => {
                             <p><strong>Author:</strong> {data.authorName}</p>
                             <p><strong>Creation Date:</strong> {new Date(data.createdAt).toLocaleString()}</p>
                         </div>
-                        <div>
-                            <h3 className="text-xl mb-2">Steps</h3>
-                            <ul className="list-disc pl-5">
-                                {data.steps.map((step, index) => (
-                                    <li key={index} className="mb-2">
-                                        <span className="font-semibold">{step.step}:</span> {step.state}
-                                        {step.stacktrace && <div className="text-red-600">Error: {step.stacktrace}</div>}
-                                    </li>
-                                ))}
-                            </ul>
+                    </div>
+
+                    <div className="mt-10 mb-10">
+                        <div className="w-1/3 flex flex-row justify-between items-center relative">
+                            <div className="absolute top-1/2 left-0 right-0 border-t border-black -z-10"></div>
+                            {data.steps.map((step, index) => (
+                                <StateIcon key={index} step={step} size={30} />
+                            ))}
                         </div>
                     </div>
 
-                    <button
-                        onClick={startPipeline}
-                        disabled={HasPipelineRunning}
-                        className={`mt-4 ${HasPipelineRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
-                    >
-                        Start Pipeline
-                    </button>
+                    <div>
+                        <button
+                            onClick={startPipeline}
+                            disabled={HasPipelineRunning}
+                            className={`mt-4 ${HasPipelineRunning ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold py-2 px-4 rounded`}
+                        >
+                            Start Pipeline
+                        </button>
 
-                    <button
-                        onClick={deletePipeline}
-                        disabled={isRunning}
-                        className={`mt-4 ml-4 ${isRunning ? 'bg-gray-400' : 'bg-red-500 hover:bg-red-700'} text-white font-bold py-2 px-4 rounded`}
-                    >
-                        Delete Pipeline
-                    </button>
+                        <button
+                            onClick={deletePipeline}
+                            disabled={isRunning}
+                            className={`mt-4 ml-4 ${isRunning ? 'bg-gray-400' : 'bg-red-500 hover:bg-red-700'} text-white font-bold py-2 px-4 rounded`}
+                        >
+                            Delete Pipeline
+                        </button>
+                    </div>
                 </div>
             ) : (
                 isLoading ? (

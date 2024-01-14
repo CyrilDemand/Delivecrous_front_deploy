@@ -5,6 +5,7 @@ import { useSocket } from '../contexts/SocketContext';
 import withAuthProtection from '../contexts/AuthProtection';
 import PipelinePopup from "./PipelinePopup";
 import toast from "react-hot-toast";
+import {StateIcon} from "./StateIcon";
 
 
 const Repository = () => {
@@ -170,7 +171,7 @@ const Repository = () => {
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Name
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         State
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -193,8 +194,8 @@ const Repository = () => {
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {pipeline.name}
                                         </td>
-                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {pipeline.state}
+                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm flex flex-row items-center justify-center">
+                                            <StateIcon step={{ state: pipeline.state }} size={30} />
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <p className="text-blue-500 underline cursor-pointer w-min" onClick={(e) => navigateToGithubCommit(pipeline.commitId, e)}>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import logo from '../ressources/logo.png';
+
 const Navbar = () => {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(null);
@@ -26,8 +28,9 @@ const Navbar = () => {
 
     return (
         <nav className="bg-blue-500 text-white p-4 flex flex-row justify-between items-center">
-            <div>
-                <h1 className="text-3xl font-bold ">CodePulse</h1>
+            <div className='flex flex-row'>
+                <img src={logo} alt='logo' className='h-[40px] w-auto'/>
+                <h1 className="text-3xl font-bold ml-3">CodePulse</h1>
             </div>
 
             {userInfo && (
