@@ -1,7 +1,7 @@
 // Login.js
 import React, { useState } from 'react';
 import {useLocation} from "react-router-dom";
-// Importez d'autres bibliothèques si nécessaire, par exemple pour la gestion des formulaires
+import { FaGithub } from "react-icons/fa";
 
 const Login = () => {
 
@@ -17,11 +17,14 @@ const Login = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="w-full max-w-sm">
-                <div className="mb-4 text-center">
+        <div className="w-screen h-screen flex flex-col justify-center items-center bg-blue-500">
+            <div className="max-w-sm bg-white shadow-xl px-20 py-10">
+                <h1 className="font-bold text-3xl">Log In : </h1>
+
+                <div className="mb-4 text-center mt-10">
                     <button onClick={handleGitHubLogin} className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Se connecter avec GitHub
+                        <FaGithub className="inline-block mr-2"/>
+                        Login with GitHub
                     </button>
                 </div>
             </div>
