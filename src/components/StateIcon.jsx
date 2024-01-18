@@ -15,7 +15,9 @@ export const StateIcon = ({ step, size }) => {
     };
 
     return (
-        <div title={getTooltipMessage()} className="bg-white px-2">
+        <div title={getTooltipMessage()} className="bg-white px-2 flex flex-col items-center justify-center">
+            {step.step && <span className="text-xs mb-2">{step.step}</span>}
+
             {step.state === 'new' && <img src={NewIcon} alt="New" width={size} height={size}/>}
             {step.state === 'completed' && <img src={SuccessIcon} alt="Success" width={size} height={size}/>}
             {step.state === 'failed' && <img src={FailedIcon} alt="Failed" width={size} height={size}/>}

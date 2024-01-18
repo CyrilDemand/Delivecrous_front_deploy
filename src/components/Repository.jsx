@@ -6,6 +6,8 @@ import withAuthProtection from '../contexts/AuthProtection';
 import PipelinePopup from "./PipelinePopup";
 import toast from "react-hot-toast";
 import {StateIcon} from "./StateIcon";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 
 const Repository = () => {
@@ -20,12 +22,10 @@ const Repository = () => {
 
     const [isPipelinePopupOpen, setIsPipelinePopupOpen] = useState(false);
 
-    // Function to open the PipelinePopup
     const openPipelinePopup = () => {
         setIsPipelinePopupOpen(true);
     };
 
-    // Function to close the PipelinePopup
     const closePipelinePopup = () => {
         setIsPipelinePopupOpen(false);
     };
@@ -74,12 +74,20 @@ const Repository = () => {
                     fetchData();
                 }
             });
+
+            socket.on('pipelineStopped', (updatedPipeline) => {
+                console.log('pipelineStopped : ' + updatedPipeline.toString());
+                if (updatedPipeline.repoId === repoid) {
+                    fetchData();
+                }
+            });
         }
 
         return () => {
             if (socket) {
                 socket.off('pipelineCreated');
                 socket.off('pipelineUpdated');
+                socket.off('pipelineStopped');
             }
         };
     }, [repoid, socket]);
@@ -121,16 +129,30 @@ const Repository = () => {
 
     const deletePipeline = async (pipelineId,event) => {
         event.stopPropagation();
-        if (window.confirm('Are you sure you want to delete this pipeline?')) {
-            try {
-                await axios.delete(`http://localhost:3001/pipelines/${pipelineId}`, { withCredentials: true });
-                toast.success('Pipeline successfully deleted');
-                setData(prevData => prevData.filter(pipeline => pipeline._id !== pipelineId));
-            } catch (error) {
-                console.error('Error deleting pipeline:', error);
-                toast.error('Failed to delete pipeline : '+error.response.data);
-            }
-        }
+        confirmAlert({
+            title: 'Delete pipeline ?',
+            message: 'Are you sure you want to delete this pipeline ?',
+            closeOnEscape: true,
+            closeOnClickOutside: true,
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: async () => {
+                        try {
+                            await axios.delete(`http://localhost:3001/pipelines/${pipelineId}`, {withCredentials: true});
+                            toast.success('Pipeline successfully deleted');
+                            setData(prevData => prevData.filter(pipeline => pipeline._id !== pipelineId));
+                        } catch (error) {
+                            console.error('Error deleting pipeline:', error);
+                            toast.error('Failed to delete pipeline : ' + error.response.data);
+                        }
+                    }
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        });
     };
 
 

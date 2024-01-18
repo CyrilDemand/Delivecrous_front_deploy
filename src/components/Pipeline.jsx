@@ -5,6 +5,8 @@ import {useSocket} from "../contexts/SocketContext";
 import toast from "react-hot-toast";
 import withAuthProtection from "../contexts/AuthProtection";
 import {StateIcon} from "./StateIcon";
+import {confirmAlert} from "react-confirm-alert";
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 
 const Pipeline = () => {
@@ -60,10 +62,12 @@ const Pipeline = () => {
             });
 
             socket.on('pipelineStarted', () => {
+                console.log('Pipeline started');
                 fetchData();
             });
 
             socket.on('pipelineStopped', () => {
+                console.log('Pipeline stopped');
                 fetchData();
             });
         }
@@ -100,16 +104,30 @@ const Pipeline = () => {
     };
 
     const deletePipeline = async () => {
-        if (window.confirm('Are you sure you want to delete this pipeline?')) {
-            try {
-                await axios.delete(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
-                toast.success('Pipeline successfully deleted');
-                navigate('/repository/'+data.repoId); // Navigate to a different page after deletion
-            } catch (error) {
-                console.error('Error deleting pipeline:', error);
-                toast.error('Failed to delete pipeline : '+error.response.data);
-            }
-        }
+        confirmAlert({
+            title: 'Delete pipeline ?',
+            message: 'Are you sure you want to delete this pipeline ?',
+            closeOnEscape: true,
+            closeOnClickOutside: true,
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: async () => {
+                        try {
+                            await axios.delete(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
+                            toast.success('Pipeline successfully deleted');
+                            navigate('/repository/'+data.repoId); // Navigate to a different page after deletion
+                        } catch (error) {
+                            console.error('Error deleting pipeline:', error);
+                            toast.error('Failed to delete pipeline : '+error.response.data);
+                        }
+                    }
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        });
     };
 
     return (
