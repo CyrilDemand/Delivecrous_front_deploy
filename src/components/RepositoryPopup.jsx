@@ -84,7 +84,7 @@ const RepositoryPopup = ({ isOpen, onClose, onSuccess }) => {
 
     return (
         isOpen && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-10">
                 <div className="bg-white p-5 rounded-lg shadow-xl w-1/2 relative" ref={popupRef}>
                     <div className="flex justify-between items-center pb-3">
                         <p className="text-2xl font-bold">Select a Repository</p>

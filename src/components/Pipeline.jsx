@@ -17,6 +17,7 @@ const Pipeline = () => {
     const [HasPipelineRunning, setHasPipelineRunning] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedStep, setSelectedStep] = useState(null); // [step, setStep
     const socket = useSocket();
     const navigate = useNavigate();
 
@@ -168,12 +169,14 @@ const Pipeline = () => {
                         <div className="w-1/3 flex flex-row justify-between items-center relative">
                             <div className="absolute top-1/2 left-0 right-0 border-t border-black -z-10"></div>
                             {data.steps.map((step, index) => (
-                                <StateIcon key={index} step={step} size={30} />
+                                <div className="cursor-pointer" onClick={()=>{ setSelectedStep(step) }}>
+                                    <StateIcon key={index} step={step} size={30} />
+                                </div>
                             ))}
                         </div>
                     </div>
 
-                    <div>
+                    <div className="mb-10">
                         <button
                             onClick={startPipeline}
                             disabled={HasPipelineRunning}
@@ -190,6 +193,25 @@ const Pipeline = () => {
                             Delete Pipeline
                         </button>
                     </div>
+
+                    {selectedStep && (
+                        <div>
+                            <div className="flex flex-row items-center justify-between">
+                                <h2 className="text-2xl font-semibold mb-4">Logs for step "{selectedStep.step}"</h2>
+                                <button
+                                    onClick={()=>{ setSelectedStep(null) }}
+                                    disabled={isRunning}
+                                    className={`bg-gray-800 text-white font-bold py-2 px-4 rounded ml-4`}
+                                >
+                                    Hide
+                                </button>
+                            </div>
+                            <div className="bg-gray-900 text-white whitespace-pre-line p-3">
+                                {selectedStep.stacktrace}
+                            </div>
+
+                        </div>
+                    )}
                 </div>
             ) : (
                 isLoading ? (
