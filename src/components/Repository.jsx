@@ -14,6 +14,7 @@ const Repository = () => {
     const { repoid } = useParams();
     const [data, setData] = useState([]);
     const [repository, setRepository] = useState(null);
+    const [status, setStatus] = useState(''); // Loading state for the page
     const [pageLoading, setPageLoading] = useState(true); // Loading state for the page
     const [pipelineLoading, setPipelineLoading] = useState(true); // Loading state for the pipeline list
     const [hasPipelineRunning, setHasPipelineRunning] = useState(false);
@@ -33,10 +34,11 @@ const Repository = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [pipelinesResponse, repositoryResponse, hasPipelineRunningResponse] = await Promise.all([
+                const [pipelinesResponse, repositoryResponse, hasPipelineRunningResponse,status] = await Promise.all([
                     axios.get(`http://localhost:3001/pipelines?repoId=${repoid}`, { withCredentials: true }),
                     axios.get(`http://localhost:3001/repositories/${repoid}`, { withCredentials: true }),
-                    axios.get(`http://localhost:3001/repositories/haspipelinerunning/${repoid}`, { withCredentials: true })
+                    axios.get(`http://localhost:3001/repositories/haspipelinerunning/${repoid}`, { withCredentials: true }),
+                    axios.get(`http://localhost:3001/repositories/status/${repoid}`, { withCredentials: true })
                 ]);
 
                 const sortedPipelines = pipelinesResponse.data.sort((a, b) => {
@@ -46,6 +48,7 @@ const Repository = () => {
                 setData(sortedPipelines);
                 setRepository(repositoryResponse.data);
                 setHasPipelineRunning(hasPipelineRunningResponse.data.isRunning);
+                setStatus(status.data.isDeployed)
 
                 // Set both loading states to false once data is fetched
                 setPageLoading(false);
@@ -161,7 +164,9 @@ const Repository = () => {
             {repository ? (
                 <div>
                     <div className="mb-4 p-4 bg-white shadow rounded">
-                        <h3 className="text-lg font-semibold">{repository.name}</h3>
+
+                        <h1 className="text-2xl font-semibold">{repository.name}</h1>
+                        <h2 className="text-lg ">{status}</h2>
                         <p className="text-sm text-gray-600">{repository.description || 'No description available'}</p>
                         <a href={repository.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                             Visit Repository

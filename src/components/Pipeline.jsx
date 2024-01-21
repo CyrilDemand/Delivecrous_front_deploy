@@ -12,6 +12,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 const Pipeline = () => {
     const { pipelineid } = useParams();
     const [data, setData] = useState(null);
+    const [repo, setRepo] = useState(null);
+    const [repoStatus, setRepoStatus] = useState(null);
     const [HasPipelineRunning, setHasPipelineRunning] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -41,10 +43,17 @@ const Pipeline = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/pipelines/${pipelineid}`, { withCredentials: true });
-                console.log(response.data)
                 setData(response.data);
                 setIsLoading(false);
                 setIsRunning(response.data.state === "running")
+
+                const repoResponse = await axios.get(`http://localhost:3001/repositories/${response.data.repoId}`, { withCredentials: true });
+                console.log(repoResponse.data);
+                setRepo(repoResponse.data);
+
+                const repoStatusResponse = await axios.get(`http://localhost:3001/repositories/status/${response.data.repoId}`, { withCredentials: true })
+                setRepoStatus(repoStatusResponse.data.isDeployed);
+
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
                 setIsLoading(false);
@@ -134,6 +143,14 @@ const Pipeline = () => {
         <div className="container mx-auto p-4">
             {data ? (
                 <div>
+                    <div className="mb-4 p-4 bg-white shadow rounded">
+
+                        <h1 className="text-2xl font-semibold underline cursor-pointer" onClick={()=> navigate("/repository/"+repo._id)}>{repo?.name}</h1>
+                        <h2 className="text-lg ">{repoStatus}</h2>
+                    </div>
+
+
+
                     <div>
                         <h2 className="text-2xl font-semibold mb-4">Pipeline Details</h2>
                         <div className="mb-6">
