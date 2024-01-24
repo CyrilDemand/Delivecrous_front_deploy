@@ -12,7 +12,8 @@ const withAuthProtection = (WrappedComponent) => {
 
         useEffect(() => {
             if (!isLoading && !isAuthenticated) {
-                const fullPath = location.pathname + location.search + location.hash;
+                let fullPath = location.pathname + location.search + location.hash;
+                if (fullPath.length <=1) fullPath = '';
 
                 navigate('/login?redirect=' + encodeURIComponent(fullPath), { replace: true });
             }
