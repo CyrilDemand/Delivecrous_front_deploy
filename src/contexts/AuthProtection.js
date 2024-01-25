@@ -14,6 +14,7 @@ const withAuthProtection = (WrappedComponent) => {
             if (!isLoading && !isAuthenticated) {
                 let fullPath = location.pathname + location.search + location.hash;
                 if (fullPath.length <=1) fullPath = '';
+                fullPath = fullPath.replace(/^\/|\/$/g, '');
 
                 navigate('/login?redirect=' + encodeURIComponent(fullPath), { replace: true });
             }
