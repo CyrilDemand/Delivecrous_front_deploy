@@ -1,4 +1,3 @@
-// withAuthProtection.js
 import React, { useContext, useEffect } from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import { AuthContext } from './AuthContext';
@@ -22,7 +21,6 @@ const withAuthProtection = (WrappedComponent) => {
 
 
         if (!isAuthenticated || isLoading) {
-            // You can render a loading indicator or null here
             return null;
         }
 

@@ -14,9 +14,9 @@ const Repository = () => {
     const { repoid } = useParams();
     const [data, setData] = useState([]);
     const [repository, setRepository] = useState(null);
-    const [status, setStatus] = useState(''); // Loading state for the page
-    const [pageLoading, setPageLoading] = useState(true); // Loading state for the page
-    const [pipelineLoading, setPipelineLoading] = useState(true); // Loading state for the pipeline list
+    const [status, setStatus] = useState('');
+    const [pageLoading, setPageLoading] = useState(true);
+    const [pipelineLoading, setPipelineLoading] = useState(true);
     const [hasPipelineRunning, setHasPipelineRunning] = useState(false);
     const navigate = useNavigate();
     const socket = useSocket();
@@ -50,12 +50,11 @@ const Repository = () => {
                 setHasPipelineRunning(hasPipelineRunningResponse.data.isRunning);
                 setStatus(status.data.isDeployed)
 
-                // Set both loading states to false once data is fetched
                 setPageLoading(false);
                 setPipelineLoading(false);
             } catch (error) {
                 console.error('Erreur lors de la récupération des données', error);
-                // Set both loading states to false in case of an error
+
                 setPageLoading(false);
                 setPipelineLoading(false);
             }
@@ -103,7 +102,6 @@ const Repository = () => {
         event.stopPropagation();
         let baseUrl = repository.url;
 
-        // Remove '.git' from the end of the URL if it exists
         if (baseUrl.endsWith('.git')) {
             baseUrl = baseUrl.substring(0, baseUrl.length - 4);
         }

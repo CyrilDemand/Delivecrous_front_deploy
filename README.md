@@ -1,4 +1,4 @@
-## TODO
+## Idée d'améliorations
 
 - [ ] Affichage d'un breadcrumb
 - [ ] Meilleure gestion de la redirection vers le login (ne mache pas quand on passe d'un chemin a l'autre via navigate, seulement quand on refresh la page)

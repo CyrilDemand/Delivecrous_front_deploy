@@ -25,7 +25,6 @@ const Pipeline = () => {
     useEffect(() => {
         const updateisRunning = async () => {
             if (!data) {
-                // Data is null, exit the function or handle accordingly
                 return;
             }
 

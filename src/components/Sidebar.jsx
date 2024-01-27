@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import RepositoryPopup from "./RepositoryPopup"; // make sure to install axios if not already installed
+import RepositoryPopup from "./RepositoryPopup";
 
 const Sidebar = () => {
     const [repositories, setRepositories] = useState([]);
@@ -24,8 +24,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         fetchRepositories();
-    }, [repositories]); // Empty dependency array means this effect runs once on mount
-
+    }, [repositories]);
     const handleButtonClick = async () => {
         try {
             const response = await axios.get('http://localhost:3001/user/repositories', {withCredentials: true});

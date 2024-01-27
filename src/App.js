@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
@@ -7,7 +6,7 @@ import Layout from './components/Layout';
 import Pipeline from "./components/Pipeline";
 import {SocketProvider} from "./contexts/SocketContext";
 import {Toaster} from "react-hot-toast";
-import {AuthProvider} from "./contexts/AuthContext"; // Assurez-vous d'importer le composant de disposition
+import {AuthProvider} from "./contexts/AuthContext";
 
 const App = () => {
     return (

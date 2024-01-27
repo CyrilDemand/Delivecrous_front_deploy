@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import { IoClose } from 'react-icons/io5';
-import toast from "react-hot-toast"; // Import the close icon
+import toast from "react-hot-toast";
 
 
 const RepositoryPopup = ({ isOpen, onClose, onSuccess }) => {
@@ -73,11 +73,9 @@ const RepositoryPopup = ({ isOpen, onClose, onSuccess }) => {
 
 
             } else {
-                // Handle the case where no repository is selected
                 console.error('No repository selected.');
             }
         } catch (error) {
-            // Handle errors here
             console.error('Error confirming repository:', error);
         }
     };

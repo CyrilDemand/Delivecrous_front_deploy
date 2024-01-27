@@ -22,7 +22,6 @@ const Navbar = () => {
     }, []);
 
     const handleLogout = () => {
-        // Implement the logout logic (e.g., clearing session and redirecting)
         navigate('/login');
     };
 
