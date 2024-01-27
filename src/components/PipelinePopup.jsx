@@ -78,8 +78,7 @@ const PipelinePopup = ({ isOpen, onClose, repositoryId }) => {
             toast.success('Pipeline created successfully!');
             onClose(); // Close the popup after successful creation
         } catch (error) {
-            console.error('Error creating pipeline:', error);
-            toast.error('Failed to create pipeline');
+            toast.error('Failed to create pipeline : ',error);
         }
     };
 
