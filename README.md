@@ -1,6 +1,11 @@
-## Idée d'améliorations
+## Here are the ideas for improvements:
 
-- [ ] Affichage d'un breadcrumb
-- [ ] Meilleure gestion de la redirection vers le login (ne mache pas quand on passe d'un chemin a l'autre via navigate, seulement quand on refresh la page)
-- [ ] Mettre redux en place (c'est un peu le bordel au niveau des appels api)
-- [ ] Possibilité de supprimer un repo ? (ca va être très galère pour pas grand chose)
+- [ ] Display a breadcrumb navigation
+- [ ] Better management of redirection to login (it doesn't work when navigating from one path to another via navigate, only when refreshing the page)
+- [ ] Implement Redux for state management (the API calls are a bit chaotic)
+- [ ] Ability to delete a repository? (it's going to be very tricky for little gain)
+
+      
+## Démo
+
+https://youtu.be/rqg2PjFsdQg
